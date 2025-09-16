@@ -69,8 +69,7 @@ public class LoadBalancerService : BackgroundService
 
         Console.WriteLine($"********* Service {service.HostName} ***********");
         using var serviceClient = tcpFactory.CreateClient();
-        serviceClient.ConnectAsync(service.HostName, 8080);
-
+        await serviceClient.ConnectAsync(service.HostName, 8080);
     }
 }
 

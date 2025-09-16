@@ -1,9 +1,10 @@
-﻿namespace Prc.ServiceSelector;
+﻿using Microsoft.Extensions.Configuration;
+
+namespace Prc.ServiceSelector;
 
 public class ServiceSelector : IServiceSelector
 {
     private List<BackendService> services;
-
     private int currentIndex;
 
     public ServiceSelector(List<BackendService> services)
