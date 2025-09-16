@@ -1,5 +1,6 @@
 ﻿namespace Prc.ServiceSelector.Test;
 
+using Microsoft.Extensions.Options;
 using FluentAssertions;
 
 public class ServiceSelectorTests
@@ -22,7 +23,7 @@ public class ServiceSelectorTests
     {
         var services = new List<BackendService>
         {
-            new BackendService{HostName = "a"}
+            new (){HostName = "a"}
         };
 
         var sut = new ServiceSelector(services);
@@ -37,8 +38,8 @@ public class ServiceSelectorTests
     {
         var services = new List<BackendService>
         {
-            new BackendService{HostName = "a"},
-            new BackendService{HostName = "b"},
+            new (){HostName = "a"},
+            new (){HostName = "b"},
         };
 
         var sut = new ServiceSelector(services);
@@ -55,8 +56,8 @@ public class ServiceSelectorTests
     {
         var services = new List<BackendService>
         {
-            new BackendService{HostName = "a"},
-            new BackendService{HostName = "b"},
+            new (){HostName = "a"},
+            new (){HostName = "b"},
         };
 
         var sut = new ServiceSelector(services);
@@ -68,4 +69,23 @@ public class ServiceSelectorTests
         result?.HostName.Should().Be("a");
     }
 
+    [Fact]
+    public void ConfigureServicesFromConfig()
+    {
+        var config = new LoadBalancerConfig
+        {
+            BackendServices = new List<BackendService>
+            {
+                new() { HostName = "a", Port = 8081 },
+                new() { HostName = "b", Port = 8082 }
+            }
+        };
+
+        var options = Options.Create(config);
+
+        var sut = new ServiceSelector(options);
+
+        var result = sut.GetNextService();
+        result?.HostName.Should().Be("a");
+    }
 }
