@@ -42,9 +42,10 @@ public class LoadBalancerService : BackgroundService
         await ExecuteAsync(token);
     }
 
-    public override Task StopAsync(CancellationToken cancellationToken)
+    public override Task StopAsync(CancellationToken token)
     {
-        return base.StopAsync(cancellationToken);
+        listener?.Stop();
+        return base.StopAsync(token);
     }
 
     public override string? ToString()
@@ -52,24 +53,52 @@ public class LoadBalancerService : BackgroundService
         return base.ToString();
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken token)
     {
         Console.WriteLine("********* Executing ***********");
         listener = tcpFactory.CreateListener(IPAddress.Parse("0.0.0.0"), 8080);
         listener.Start();
 
-        var client = await listener.AcceptTcpClientAsync();
-        _ = Task.Run(() => HandleClientRequestAsync(client, stoppingToken), stoppingToken);
-
+        while (!token.IsCancellationRequested)
+        {
+            try
+            {
+                var client = await listener.AcceptTcpClientAsync();
+                _ = Task.Run(() => HandleClientRequestAsync(client, token), token);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error accepting client: {ex.Message}");
+                break;
+            }
+        }
     }
 
     private async Task HandleClientRequestAsync(ITcpClient client, CancellationToken token)
     {
-        var service = serviceSelector.GetNextService();
+        try
+        {
+            var service = serviceSelector.GetNextService();
 
-        Console.WriteLine($"********* Service {service.HostName} ***********");
-        using var serviceClient = tcpFactory.CreateClient();
-        await serviceClient.ConnectAsync(service.HostName, 8080);
+            if (service == null)
+            {
+                Console.WriteLine("********* No backend services available ***********");
+                return;
+            }
+
+            Console.WriteLine($"********* Service {service.HostName}:{service.Port} ***********");
+            using var serviceClient = tcpFactory.CreateClient();
+            await serviceClient.ConnectAsync(service.HostName, service.Port);
+            Console.WriteLine($"********* Connected to {service.HostName}:{service.Port} ***********");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error handling client request: {ex.Message}");
+        }
+        finally
+        {
+            client?.Dispose();
+        }
     }
 }
 

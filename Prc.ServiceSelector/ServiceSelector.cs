@@ -14,10 +14,20 @@ public class ServiceSelector : IServiceSelector
         currentIndex = 0;
     }
 
+    /*
     public ServiceSelector(IOptions<LoadBalancerConfig> options)
     {
         config = options.Value;
         services = config.BackendServices;
+        currentIndex = 0;
+    }
+*/
+
+
+    public ServiceSelector(LoadBalancerConfig config)
+    {
+        services = config.BackendServices;
+        currentIndex = 0;
     }
 
     public BackendService? GetNextService()
