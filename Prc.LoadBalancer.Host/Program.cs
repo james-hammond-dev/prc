@@ -20,7 +20,8 @@ public class Program
                 sp.GetRequiredService<IOptions<LoadBalancerConfig>>().Value);
 
         builder.Services.AddSingleton<IServiceSelector, ServiceSelector>(sp =>
-                new ServiceSelector(sp.GetRequiredService<LoadBalancerConfig>()));
+                new ServiceSelector(sp.GetRequiredService<LoadBalancerConfig>()
+                            .BackendServices.OrderBy(x => x.Port).ToList()));
 
         builder.Services.AddHostedService<LoadBalancerService>();
         var host = builder.Build();
