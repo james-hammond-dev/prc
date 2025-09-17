@@ -1,4 +1,4 @@
-namespace Prc.LoadBalancerService;
+﻿namespace Prc.HealthCheckService;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;

@@ -5,8 +5,19 @@ using FluentAssertions;
 
 public class LoadBalancerLoadTests : TestBase
 {
+    // start n bg services
+    // use loop ? to create lots of http client instances
+    // check truth, 1 http client will multiplex connections so how does this affect lb?
+    //
 
+}
 
+public class LoadBalancerServiceHealthTests : TestBase
+{
+    /*
+	 * we can start two bg services and run clients
+	 * then we can kill 1 service and validate the next client calls all get same response
+	 */
 }
 
 public class LoadBalancerSimpleTests : TestBase
@@ -44,7 +55,8 @@ public class LoadBalancerSimpleTests : TestBase
             using var httpClient4 = new HttpClient();
             var response4 = await httpClient4.GetStringAsync("http://localhost:8080/");
 
-
+            //we can assert we expect each response to be unique
+            //unitl the round robin resets (2 different tests?)
             Console.WriteLine(response1);
             Console.WriteLine(response2);
             Console.WriteLine(response3);

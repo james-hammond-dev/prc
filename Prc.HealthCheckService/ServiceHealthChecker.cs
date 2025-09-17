@@ -1,15 +1,6 @@
-namespace Prc.LoadBalancerService;
-
+namespace Prc.HealthCheckService;
 using Prc.ServiceSelector;
 using Prc.LoadBalancer.TcpLibrary;
-
-public interface IServiceHealthChecker
-{
-    Task<ServiceHealth> CheckServiceHealthAsync(BackendService service,
-            CancellationToken cancellationToken,
-            ITcpFactory tcpFactory);
-}
-
 
 public class ServiceHealthChecker : IServiceHealthChecker
 {
@@ -32,3 +23,4 @@ public class ServiceHealthChecker : IServiceHealthChecker
         return new ServiceHealth(false, DateTime.UtcNow, "?");
     }
 }
+
