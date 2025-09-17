@@ -5,6 +5,7 @@ using Moq;
 using FluentAssertions;
 
 using Prc.ServiceSelector;
+using System.Text;
 
 public class LoadBalancerServiceTests
 {
@@ -36,5 +37,19 @@ public class LoadBalancerServiceTests
         await Task.Delay(100);
 
         serviceClient.ConnectCalled.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task CopyData()
+    {
+        var testData = Encoding.UTF8.GetBytes("Hello");
+        var source = new MemoryStream(testData);
+        var destination = new MemoryStream();
+        using var cts = new CancellationTokenSource();
+        cts.CancelAfter(1000);
+
+        await LoadBalancerService.CopyDataAsync(source, destination, cts.Token);
+
+        destination.ToArray().Should().Equal(testData);
     }
 }

@@ -69,7 +69,6 @@ public class ServiceSelectorTests
         result?.HostName.Should().Be("a");
     }
 
-    /*
     [Fact]
     public void ConfigureServicesFromConfig()
     {
@@ -84,10 +83,9 @@ public class ServiceSelectorTests
 
         var options = Options.Create(config);
 
-        var sut = new ServiceSelector(options);
+        var sut = new ServiceSelector(options.Value);
 
         var result = sut.GetNextService();
         result?.HostName.Should().Be("a");
     }
-    */
 }

@@ -87,9 +87,19 @@ public class LoadBalancerService : BackgroundService
             }
 
             Console.WriteLine($"********* Service {service.HostName}:{service.Port} ***********");
+
             using var serviceClient = tcpFactory.CreateClient();
             await serviceClient.ConnectAsync(service.HostName, service.Port);
+
             Console.WriteLine($"********* Connected to {service.HostName}:{service.Port} ***********");
+
+            var clientStream = client.GetStream();
+            var serviceStream = serviceClient.GetStream();
+
+            var task1 = CopyDataAsync(clientStream, serviceStream, token);
+            var task2 = CopyDataAsync(serviceStream, clientStream, token);
+
+            await Task.WhenAny(task1, task2);
         }
         catch (Exception ex)
         {
@@ -98,6 +108,25 @@ public class LoadBalancerService : BackgroundService
         finally
         {
             client?.Dispose();
+        }
+    }
+
+    public static async Task CopyDataAsync(Stream source, Stream destination, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var buffer = new byte[8192];
+            int bytesRead;
+
+            while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+            {
+                await destination.WriteAsync(buffer, 0, bytesRead, cancellationToken);
+                await destination.FlushAsync(cancellationToken);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in transfer : {ex.Message}");
         }
     }
 }

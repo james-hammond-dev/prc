@@ -1,0 +1,11 @@
+cd ../Prc.LoadBalancer.Host/
+dotnet run
+
+-- new terminal / tmux
+
+--setup single listening service
+
+while true; do echo -e "HTTP/1.1 200 OK\r\n\r\nHello from backend 8081" | nc -l 8081; done
+
+-- call via load balancer 
+nc localhost 8080
