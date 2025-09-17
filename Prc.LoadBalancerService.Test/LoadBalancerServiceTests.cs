@@ -3,21 +3,20 @@
 using System.Net;
 using Moq;
 using FluentAssertions;
-
 using Prc.ServiceSelector;
+using Prc.LoadBalancer.TcpLibrary;
 using System.Text;
 
 public class LoadBalancerServiceTests
 {
-
     [Fact]
     public async Task StartService()
     {
         var serviceSelector = new FakeServiceSelector();
         var mockTcpFactory = new Mock<ITcpFactory>();
         var listener = new FakeTcpListener();
-        var client = new FakeTcpClient();
-        var serviceClient = new FakeTcpClient();
+        var client = new FakeTcpClient(true);
+        var serviceClient = new FakeTcpClient(true);
 
         mockTcpFactory.Setup(f => f.CreateListener(It.IsAny<IPAddress>(), It.IsAny<int>()))
                     .Returns(listener);

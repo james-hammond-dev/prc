@@ -1,4 +1,5 @@
-namespace Prc.LoadBalancerService;
+namespace Prc.LoadBalancer.TcpLibrary;
+
 using System.Threading.Tasks;
 
 public interface ITcpListener
@@ -8,5 +9,7 @@ public interface ITcpListener
     Task<ITcpClient> AcceptTcpClientAsync();
     bool Active { get; }
 }
+
+
 
 

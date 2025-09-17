@@ -1,15 +1,17 @@
-namespace Prc.LoadBalancerService.Test;
+namespace Prc.LoadBalancer.TcpLibrary;
+
+using System.Threading.Tasks;
 
 public class FakeTcpListener : ITcpListener
 {
-    private readonly Queue<ITcpClient> queue = new();
+    private readonly Queue<ITcpClient> _clientQueue = new();
     public bool Active { get; private set; }
     public bool StartCalled { get; private set; }
     public bool StopCalled { get; private set; }
 
     public void QueueClient(ITcpClient client)
     {
-        queue.Enqueue(client);
+        _clientQueue.Enqueue(client);
     }
 
     public void Start()
@@ -26,12 +28,14 @@ public class FakeTcpListener : ITcpListener
 
     public Task<ITcpClient> AcceptTcpClientAsync()
     {
-        if (queue.Count > 0)
+        if (_clientQueue.Count > 0)
         {
-            return Task.FromResult(queue.Dequeue());
+            return Task.FromResult(_clientQueue.Dequeue());
         }
 
         return Task.FromResult<ITcpClient>(new FakeTcpClient());
     }
 }
+
+
 

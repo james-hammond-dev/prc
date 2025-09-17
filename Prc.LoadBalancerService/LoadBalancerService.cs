@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Prc.ServiceSelector;
+using Prc.LoadBalancer.TcpLibrary;
 
 public class LoadBalancerService : BackgroundService
 {

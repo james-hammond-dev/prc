@@ -1,9 +1,21 @@
-namespace Prc.LoadBalancerService.Test;
+namespace Prc.LoadBalancer.TcpLibrary;
 
 using System.Net;
+using System.Net.Sockets;
+using System.Threading.Tasks;
 
 public class FakeTcpClient : ITcpClient
 {
+    public FakeTcpClient()
+    {
+
+    }
+
+    public FakeTcpClient(bool connectSuccess)
+    {
+        ConnectCalled = connectSuccess;
+    }
+
     private readonly MemoryStream stream = new();
     public bool Connected { get; set; } = true;
     public EndPoint? RemoteEndPoint { get; set; } = new IPEndPoint(IPAddress.Loopback, 12345);
@@ -12,8 +24,11 @@ public class FakeTcpClient : ITcpClient
 
     public Task ConnectAsync(string hostname, int port)
     {
-        ConnectCalled = true;
-        return Task.CompletedTask;
+        if (ConnectCalled == true)
+            return Task.CompletedTask;
+
+        //TODO : good enough for our purposes ?
+        return Task.FromException(new SocketException());
     }
 
     public Stream GetStream() => stream;
@@ -29,4 +44,5 @@ public class FakeTcpClient : ITcpClient
         GC.SuppressFinalize(this);
     }
 }
+
 

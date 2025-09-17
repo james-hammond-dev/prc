@@ -14,5 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Prc.ServiceSelector\Prc.ServiceSelector.csproj" />
     <ProjectReference Include="..\Prc.LoadBalancerService\Prc.LoadBalancerService.csproj" />
+    <ProjectReference Include="..\Prc.LoadBalancer.TcpLibrary\Prc.LoadBalancer.TcpLibrary.csproj" />
   </ItemGroup>
 </Project>

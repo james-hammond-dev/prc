@@ -88,4 +88,38 @@ public class ServiceSelectorTests
         var result = sut.GetNextService();
         result?.HostName.Should().Be("a");
     }
+
+    [Fact]
+    public void SetServiceHealth()
+    {
+        var services = new List<BackendService>
+        {
+            new (){HostName = "a", Port = 8081 },
+            new (){HostName = "b", Port = 8082 },
+        };
+
+        var sut = new ServiceSelector(services);
+
+        var unhealthyService = new BackendService
+        {
+            HostName = "a",
+            Port = 8081,
+            ServiceHealth = new ServiceHealth(false, DateTime.UtcNow, "my-info")
+        };
+
+        var updated = sut.SetServiceHealth(unhealthyService);
+
+        updated.Should().BeTrue();
+
+        var x = sut
+            .Services
+            .SingleOrDefault(s =>
+                    s.HostName == unhealthyService.HostName
+                    && s.Port == unhealthyService.Port);
+
+        x!.ServiceHealth!.IsHealthy.Should().BeFalse();
+    }
+
+    //TODO: think about behaviour when there's no matching service.
+
 }

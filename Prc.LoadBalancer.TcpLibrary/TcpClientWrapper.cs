@@ -1,17 +1,8 @@
-namespace Prc.LoadBalancerService;
+﻿namespace Prc.LoadBalancer.TcpLibrary;
 
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-
-public interface ITcpClient : IDisposable
-{
-    bool Connected { get; }
-    EndPoint? RemoteEndPoint { get; }
-    Task ConnectAsync(string hostname, int port);
-    Stream GetStream();
-    void Close();
-}
 
 public class TcpClientWrapper : ITcpClient
 {

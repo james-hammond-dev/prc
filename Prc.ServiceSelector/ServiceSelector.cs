@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Options;
-
-namespace Prc.ServiceSelector;
+﻿namespace Prc.ServiceSelector;
 
 public class ServiceSelector : IServiceSelector
 {
     private List<BackendService> services;
     private int currentIndex;
     private readonly LoadBalancerConfig? config;
+
+    public List<BackendService> Services => services;
 
     public ServiceSelector(List<BackendService> services)
     {
@@ -34,5 +34,18 @@ public class ServiceSelector : IServiceSelector
         currentIndex = (currentIndex + 1);
 
         return service;
+    }
+
+    public bool SetServiceHealth(BackendService service)
+    {
+        var x = services.SingleOrDefault(s =>
+                    s.HostName == service.HostName
+                    && s.Port == service.Port);
+
+        if (x == null) return false;
+
+        x.ServiceHealth = service.ServiceHealth;
+
+        return true;
     }
 }

@@ -1,23 +1,8 @@
-namespace Prc.LoadBalancerService;
+namespace Prc.LoadBalancer.TcpLibrary;
 
 using System.Net;
 using System.Net.Sockets;
-
-public interface ITcpFactory
-{
-    ITcpListener CreateListener(IPAddress address, int port);
-    ITcpClient CreateClient();
-}
-
-
-public class TcpFactory : ITcpFactory
-{
-    public ITcpListener CreateListener(IPAddress address, int port)
-        => new TcpListenerWrapper(address, port);
-
-    public ITcpClient CreateClient()
-        => new TcpClientWrapper();
-}
+using System.Threading.Tasks;
 
 public class TcpListenerWrapper : ITcpListener
 {
