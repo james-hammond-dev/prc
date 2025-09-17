@@ -1,14 +1,24 @@
-namespace Prc.ServiceSelector;
+namespace Prc.LoadBalancerService;
 
+using Prc.ServiceSelector;
 using Prc.LoadBalancer.TcpLibrary;
 
-public class ServiceHealthChecker
+public interface IServiceHealthChecker
 {
-    public async Task<ServiceHealth> CheckServerHealthAsync(BackendService service,
+    Task<ServiceHealth> CheckServiceHealthAsync(BackendService service,
+            CancellationToken cancellationToken,
+            ITcpFactory tcpFactory);
+}
+
+
+public class ServiceHealthChecker : IServiceHealthChecker
+{
+    public async Task<ServiceHealth> CheckServiceHealthAsync(BackendService service,
             CancellationToken cancellationToken,
             ITcpFactory tcpFactory)
     {
         using var client = tcpFactory.CreateClient();
+
         var connectTask = client.ConnectAsync(service.HostName, service.Port);
         var timeoutTask = Task.Delay(5000, cancellationToken);
 
@@ -22,4 +32,3 @@ public class ServiceHealthChecker
         return new ServiceHealth(false, DateTime.UtcNow, "?");
     }
 }
-

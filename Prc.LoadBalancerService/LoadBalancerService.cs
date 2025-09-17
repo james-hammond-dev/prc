@@ -38,7 +38,6 @@ public class LoadBalancerService : BackgroundService
 
     public override async Task StartAsync(CancellationToken token)
     {
-        Console.WriteLine("********* Starting ***********");
         await ExecuteAsync(token);
     }
 
@@ -55,7 +54,6 @@ public class LoadBalancerService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken token)
     {
-        Console.WriteLine("********* Executing ***********");
         listener = tcpFactory.CreateListener(IPAddress.Parse("0.0.0.0"), 8080);
         listener.Start();
 
@@ -86,12 +84,8 @@ public class LoadBalancerService : BackgroundService
                 return;
             }
 
-            Console.WriteLine($"********* Service {service.HostName}:{service.Port} ***********");
-
             using var serviceClient = tcpFactory.CreateClient();
             await serviceClient.ConnectAsync(service.HostName, service.Port);
-
-            Console.WriteLine($"********* Connected to {service.HostName}:{service.Port} ***********");
 
             var clientStream = client.GetStream();
             var serviceStream = serviceClient.GetStream();

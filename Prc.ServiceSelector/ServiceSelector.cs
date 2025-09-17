@@ -48,4 +48,9 @@ public class ServiceSelector : IServiceSelector
 
         return true;
     }
+
+    public List<BackendService> GetServices()
+    {
+        return services;
+    }
 }

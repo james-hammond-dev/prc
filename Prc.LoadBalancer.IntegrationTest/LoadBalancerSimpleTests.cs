@@ -3,6 +3,12 @@
 using System.Diagnostics;
 using FluentAssertions;
 
+public class LoadBalancerLoadTests : TestBase
+{
+
+
+}
+
 public class LoadBalancerSimpleTests : TestBase
 {
     //TODO: based on the host config for now, look at injecting config on host startup
@@ -10,9 +16,9 @@ public class LoadBalancerSimpleTests : TestBase
     [Fact]
     public async Task BackendServicesRunning()
     {
-        var s1 = StartLocalService(8081);
-        var s2 = StartLocalService(8082);
-        var s3 = StartLocalService(8083);
+        var s1 = StartLocalService(8081, "s1-response");
+        var s2 = StartLocalService(8082, "s2-response");
+        var s3 = StartLocalService(8083, "s3-response");
 
         using var process = Process.Start(new ProcessStartInfo
         {
@@ -44,6 +50,7 @@ public class LoadBalancerSimpleTests : TestBase
             Console.WriteLine(response3);
             Console.WriteLine(response4);
 
+            //TODO: ordering not guaranteed
             //response1.Should().Contain("8081");
             //response2.Should().Contain("8082");
             //response2.Should().Contain("8083");

@@ -1,8 +1,8 @@
+namespace Prc.LoadBalancerService.Test;
 
-namespace Prc.ServiceSelector.Test;
-
-using FluentAssertions;
 using Moq;
+using FluentAssertions;
+using Prc.ServiceSelector;
 using Prc.LoadBalancer.TcpLibrary;
 
 public class ServiceHealthCheckerTests
@@ -24,7 +24,7 @@ public class ServiceHealthCheckerTests
 
         var sut = new ServiceHealthChecker();
 
-        var result = await sut.CheckServerHealthAsync(service, cts.Token, mockTcpFactory.Object);
+        var result = await sut.CheckServiceHealthAsync(service, cts.Token, mockTcpFactory.Object);
 
         result.IsHealthy.Should().BeTrue();
     }
@@ -46,8 +46,9 @@ public class ServiceHealthCheckerTests
 
         var sut = new ServiceHealthChecker();
 
-        var result = await sut.CheckServerHealthAsync(service, cts.Token, mockTcpFactory.Object);
+        var result = await sut.CheckServiceHealthAsync(service, cts.Token, mockTcpFactory.Object);
 
         result.IsHealthy.Should().BeFalse();
     }
 }
+

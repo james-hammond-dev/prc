@@ -24,7 +24,9 @@ public class Program
                 new ServiceSelector(sp.GetRequiredService<LoadBalancerConfig>()
                             .BackendServices.OrderBy(x => x.Port).ToList()));
 
+        builder.Services.AddSingleton<IServiceHealthChecker, ServiceHealthChecker>();
         builder.Services.AddHostedService<LoadBalancerService>();
+        builder.Services.AddHostedService<HealthCheckService>();
         var host = builder.Build();
         host.Run();
     }
