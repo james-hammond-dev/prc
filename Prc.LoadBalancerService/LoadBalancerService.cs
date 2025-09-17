@@ -98,7 +98,11 @@ public class LoadBalancerService : BackgroundService
             var task1 = CopyDataAsync(clientStream, serviceStream, token);
             var task2 = CopyDataAsync(serviceStream, clientStream, token);
 
-            await Task.WhenAny(task1, task2);
+            await Task.WhenAll(task1, task2);
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected
         }
         catch (Exception ex)
         {
@@ -122,6 +126,12 @@ public class LoadBalancerService : BackgroundService
                 await destination.WriteAsync(buffer, 0, bytesRead, cancellationToken);
                 await destination.FlushAsync(cancellationToken);
             }
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
         }
         catch (Exception ex)
         {
