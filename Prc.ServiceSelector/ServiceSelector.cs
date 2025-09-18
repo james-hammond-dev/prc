@@ -32,13 +32,11 @@ public class ServiceSelector : IServiceSelector
         var service = services[currentIndex];
         if (service.ServiceHealth.IsHealthy == false)
         {
-            Console.WriteLine($" ************ Unhealthy service {service.Port} ************");
             currentIndex = (currentIndex + 1);
             GetNextService();
         }
         else
         {
-            Console.WriteLine($" ************ HEALTHY  service {service.Port} ************");
         }
         currentIndex = (currentIndex + 1);
 
@@ -47,6 +45,7 @@ public class ServiceSelector : IServiceSelector
 
     public bool SetServiceHealth(BackendService service)
     {
+
         var x = services.SingleOrDefault(s =>
                     s.HostName == service.HostName
                     && s.Port == service.Port);

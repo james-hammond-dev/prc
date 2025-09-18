@@ -3,7 +3,6 @@
 # Install dotnet tools
 install:
 	dotnet tool restore
-	dotnet tool install -g grate
 
 # Restore dependencies
 restore:

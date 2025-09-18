@@ -68,13 +68,12 @@ public class LoadBalancerServiceHealthTests : TestBase
             var responses = new List<string>();
 
             using var httpClient1 = new HttpClient();
-            responses.Add(await httpClient1.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
 
             using var httpClient2 = new HttpClient();
-            responses.Add(await httpClient2.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
 
             using var httpClient3 = new HttpClient();
-            responses.Add(await httpClient3.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
+
+            await SendOneRequestViaEachClient(loadBalancerPort, responses, httpClient1, httpClient2, httpClient3);
 
             //LoadBalancer can route each request individually
             responses.Should().OnlyHaveUniqueItems();
@@ -84,11 +83,11 @@ public class LoadBalancerServiceHealthTests : TestBase
             // We loose one service
             s2.Close();
 
-            responses.Add(await httpClient1.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
-            responses.Add(await httpClient2.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
-            responses.Add(await httpClient3.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
+            await SendOneRequestViaEachClient(loadBalancerPort, responses, httpClient1, httpClient2, httpClient3);
 
             responses.Should().NotContain(x => x == "Backend 8082: s2-response");
+            responses.Clear();
+
         }
         finally
         {
@@ -97,6 +96,69 @@ public class LoadBalancerServiceHealthTests : TestBase
             s2?.Close();
             s3.Close();
         }
+    }
+
+    [Fact]
+    public async Task Three_Services_HealthStatus_Can_Fluctuate()
+    {
+        var loadBalancerPort = GetAvailablePort();
+
+        var s1 = StartLocalService(8081, "s1-response");
+        var s2 = StartLocalService(8082, "s2-response");
+        var s3 = StartLocalService(8083, "s3-response");
+
+        using var process = StartLoadBalancerHost(loadBalancerPort);
+
+        await Task.Delay(3000);
+
+        try
+        {
+            var responses = new List<string>();
+
+            using var httpClient1 = new HttpClient();
+            using var httpClient2 = new HttpClient();
+            using var httpClient3 = new HttpClient();
+
+            await SendOneRequestViaEachClient(loadBalancerPort, responses, httpClient1, httpClient2, httpClient3);
+
+            //LoadBalancer can route each request individually
+            responses.Should().OnlyHaveUniqueItems();
+
+            responses.Clear();
+
+            // We loose one service
+            s2.Close();
+
+            await SendOneRequestViaEachClient(loadBalancerPort, responses, httpClient1, httpClient2, httpClient3);
+
+            responses.Should().NotContain(x => x == "Backend 8082: s2-response");
+
+            responses.Clear();
+
+            // service is now healthy again
+            s2 = StartLocalService(8082, "s2-response");
+            await Task.Delay(3000);
+
+            await SendOneRequestViaEachClient(loadBalancerPort, responses, httpClient1, httpClient2, httpClient3);
+
+            responses.Should().OnlyHaveUniqueItems();
+        }
+        finally
+        {
+            process?.Kill();
+            s1.Close();
+            s2?.Close();
+            s3.Close();
+        }
+    }
+
+    private static async Task SendOneRequestViaEachClient(int loadBalancerPort, List<string> responses, HttpClient httpClient1, HttpClient httpClient2, HttpClient httpClient3)
+    {
+        responses.Add(await httpClient1.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
+
+        responses.Add(await httpClient2.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
+
+        responses.Add(await httpClient3.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
     }
 }
 

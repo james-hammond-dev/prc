@@ -23,7 +23,7 @@ public class HealthCheckService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var interval = 5;
+        var interval = 1;
 
         Console.WriteLine($"Health check service started with {interval}s interval");
 

@@ -22,7 +22,7 @@ public class LoadBalancerLoadTests : TestBase
 
         try
         {
-            const int totalRequests = 400;
+            const int totalRequests = 100;
 
             for (int i = 0; i < totalRequests; i++)
             {

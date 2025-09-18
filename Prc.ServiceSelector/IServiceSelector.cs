@@ -8,5 +8,7 @@ public interface IServiceSelector
     List<BackendService> GetServices();
 
     bool SetServiceHealth(BackendService service);
+
+    List<BackendService> Services { get; }
 }
 

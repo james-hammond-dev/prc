@@ -10,6 +10,8 @@ public class FakeServiceSelector : IServiceSelector
 {
     public BackendService? SingleService { get; set; }
 
+    public List<BackendService> Services => throw new NotImplementedException();
+
     private List<BackendService>? services;
 
     public FakeServiceSelector()
