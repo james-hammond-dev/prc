@@ -27,7 +27,19 @@ public class LoadBalancerServiceTests
 
         serviceSelector.SingleService = new BackendService { HostName = "a" };
 
-        var sut = new LoadBalancerService(serviceSelector, mockTcpFactory.Object);
+        var config = new LoadBalancerConfig
+        {
+            BackendServices = new List<BackendService>
+            {
+                new() { HostName = "a", Port = 8081 },
+                new() { HostName = "b", Port = 8082 }
+            },
+            ListenAddress = "0.0.0.0",
+            ListenPort = 8080
+        };
+
+
+        var sut = new LoadBalancerService(serviceSelector, mockTcpFactory.Object, config);
 
         using var cts = new CancellationTokenSource();
         cts.CancelAfter(100);

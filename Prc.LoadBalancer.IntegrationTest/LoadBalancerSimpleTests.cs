@@ -3,36 +3,22 @@
 using System.Diagnostics;
 using FluentAssertions;
 
-public class LoadBalancerLoadTests : TestBase
-{
-    // start n bg services
-    // use loop ? to create lots of http client instances
-    // check truth, 1 http client will multiplex connections so how does this affect lb?
-    //
-
-}
-
 public class LoadBalancerSimpleTests : TestBase
 {
     //TODO: based on the host config for now, look at injecting config on host startup
+    // (listening port is dynamic for now, ok so far to just use the servics configured
+    // // in the host project
 
     [Fact]
     public async Task ThreeConfiguredServices_Three_Http_Client_Requests()
     {
-        //TODO : this delay is to allow socket teardown from previous tests. improve sln.
-        await Task.Delay(5000);
+        var loadBalancerPort = GetAvailablePort();
 
         var s1 = StartLocalService(8081, "s1-response");
         var s2 = StartLocalService(8082, "s2-response");
         var s3 = StartLocalService(8083, "s3-response");
 
-        using var process = Process.Start(new ProcessStartInfo
-        {
-            FileName = "dotnet",
-            Arguments = "run --project ../../../../Prc.LoadBalancer.Host",
-            UseShellExecute = false,
-            RedirectStandardOutput = true
-        });
+        using var process = StartLoadBalancerHost(loadBalancerPort);
 
         await Task.Delay(2000);
 
@@ -41,13 +27,13 @@ public class LoadBalancerSimpleTests : TestBase
             var responses = new List<string>();
 
             using var httpClient1 = new HttpClient();
-            responses.Add(await httpClient1.GetStringAsync("http://localhost:8080/"));
+            responses.Add(await httpClient1.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
 
             using var httpClient2 = new HttpClient();
-            responses.Add(await httpClient2.GetStringAsync("http://localhost:8080/"));
+            responses.Add(await httpClient2.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
 
             using var httpClient3 = new HttpClient();
-            responses.Add(await httpClient3.GetStringAsync("http://localhost:8080/"));
+            responses.Add(await httpClient3.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
 
             responses.Should().OnlyHaveUniqueItems();
 

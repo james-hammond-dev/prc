@@ -13,7 +13,7 @@ public record ServiceHealth(bool IsHealthy, DateTime timestamp, string? info);
 
 public class LoadBalancerConfig
 {
-    //public int ListenPort { get; set; } = 8080;
-    //public string ListenAddress { get; set; } = "0.0.0.0";
+    public int ListenPort { get; set; } = 8080;
+    public string ListenAddress { get; set; } = "0.0.0.0";
     public List<BackendService> BackendServices { get; set; } = new();
 }

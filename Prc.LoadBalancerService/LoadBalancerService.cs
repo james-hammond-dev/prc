@@ -11,14 +11,16 @@ public class LoadBalancerService : BackgroundService
 {
     private readonly IServiceSelector serviceSelector;
     private readonly ITcpFactory tcpFactory;
+    private readonly LoadBalancerConfig config;
     private ITcpListener? listener;
 
     public override Task? ExecuteTask => base.ExecuteTask;
 
-    public LoadBalancerService(IServiceSelector serviceSelector, ITcpFactory tcpFactory)
+    public LoadBalancerService(IServiceSelector serviceSelector, ITcpFactory tcpFactory, LoadBalancerConfig config)
     {
         this.serviceSelector = serviceSelector;
         this.tcpFactory = tcpFactory;
+        this.config = config;
     }
 
     public override void Dispose()
@@ -54,7 +56,7 @@ public class LoadBalancerService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken token)
     {
-        listener = tcpFactory.CreateListener(IPAddress.Parse("0.0.0.0"), 8080);
+        listener = tcpFactory.CreateListener(IPAddress.Parse(config.ListenAddress), config.ListenPort);
         listener.Start();
 
         while (!token.IsCancellationRequested)
