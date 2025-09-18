@@ -1,3 +1,6 @@
+
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
+
 namespace Prc.LoadBalancer.IntegrationTest;
 
 using System.Net;

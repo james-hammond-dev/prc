@@ -18,11 +18,11 @@ public class Program
         builder.Services.AddSingleton<ITcpFactory, TcpFactory>();
 
         builder.Services.AddSingleton<LoadBalancerConfig>(sp =>
-                sp.GetRequiredService<IOptions<LoadBalancerConfig>>().Value);
+                      sp.GetRequiredService<IOptions<LoadBalancerConfig>>().Value);
 
         builder.Services.AddSingleton<IServiceSelector, ServiceSelector>(sp =>
-                new ServiceSelector(sp.GetRequiredService<LoadBalancerConfig>()
-                            .BackendServices.OrderBy(x => x.Port).ToList()));
+                    new ServiceSelector(sp.GetRequiredService<LoadBalancerConfig>()
+                                .BackendServices.OrderBy(x => x.Port).ToList()));
 
         builder.Services.AddSingleton<IServiceHealthChecker, ServiceHealthChecker>();
         builder.Services.AddHostedService<LoadBalancerService>();
