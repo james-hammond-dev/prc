@@ -1,7 +1,6 @@
 ﻿namespace Prc.HealthCheckService;
 
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
 using Prc.ServiceSelector;
 using Prc.LoadBalancer.TcpLibrary;
 
@@ -9,7 +8,6 @@ public class HealthCheckService : BackgroundService
 {
     private readonly IServiceSelector serviceSelector;
     private readonly IServiceHealthChecker healthChecker;
-    //private readonly IConfiguration configuration;
     private readonly ITcpFactory tcpFactory;
 
     public HealthCheckService(IServiceSelector serviceSelector,
@@ -23,7 +21,7 @@ public class HealthCheckService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var interval = 1;
+        var interval = 3;
 
         Console.WriteLine($"Health check service started with {interval}s interval");
 

@@ -1,11 +1,11 @@
-.PHONY: install build test clean restore
+.PHONY: install build test clean restore all
 
 # Install dotnet tools
 install:
 	dotnet tool restore
 
 # Restore dependencies
-restore:
+restore: install
 	dotnet restore
 
 # Build the project

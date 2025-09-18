@@ -137,7 +137,7 @@ public class LoadBalancerServiceHealthTests : TestBase
 
             // service is now healthy again
             s2 = StartLocalService(8082, "s2-response");
-            await Task.Delay(3000);
+            await Task.Delay(4000);
 
             await SendOneRequestViaEachClient(loadBalancerPort, responses, httpClient1, httpClient2, httpClient3);
 
