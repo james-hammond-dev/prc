@@ -30,7 +30,16 @@ public class ServiceSelector : IServiceSelector
         }
 
         var service = services[currentIndex];
-
+        if (service.ServiceHealth.IsHealthy == false)
+        {
+            Console.WriteLine($" ************ Unhealthy service {service.Port} ************");
+            currentIndex = (currentIndex + 1);
+            GetNextService();
+        }
+        else
+        {
+            Console.WriteLine($" ************ HEALTHY  service {service.Port} ************");
+        }
         currentIndex = (currentIndex + 1);
 
         return service;

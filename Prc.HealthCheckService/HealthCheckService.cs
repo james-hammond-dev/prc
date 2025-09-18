@@ -14,18 +14,15 @@ public class HealthCheckService : BackgroundService
 
     public HealthCheckService(IServiceSelector serviceSelector,
             IServiceHealthChecker healthChecker,
-            // IConfiguration configuration,
             ITcpFactory tcpFactory)
     {
         this.serviceSelector = serviceSelector;
         this.healthChecker = healthChecker;
-        //this.configuration = configuration;
         this.tcpFactory = tcpFactory;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        //var interval = configuration.GetValue<int>("HealthCheck:IntervalSeconds", 30);
         var interval = 5;
 
         Console.WriteLine($"Health check service started with {interval}s interval");

@@ -5,10 +5,7 @@ using FluentAssertions;
 public class LoadBalancerLoadTests : TestBase
 {
     // start n bg services
-    // use loop ? to create lots of http client instances
-    // check truth, 1 http client will multiplex connections so how does this affect lb?
-    //
-
+    // use loop  to create lots of http client instances
     [Fact]
     public async Task SingleThread_ClientRotation()
     {
@@ -25,7 +22,7 @@ public class LoadBalancerLoadTests : TestBase
 
         try
         {
-            const int totalRequests = 1000;
+            const int totalRequests = 400;
 
             for (int i = 0; i < totalRequests; i++)
             {

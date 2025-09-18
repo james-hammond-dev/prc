@@ -38,7 +38,6 @@ public class LoadBalancerServiceTests
             ListenPort = 8080
         };
 
-
         var sut = new LoadBalancerService(serviceSelector, mockTcpFactory.Object, config);
 
         using var cts = new CancellationTokenSource();

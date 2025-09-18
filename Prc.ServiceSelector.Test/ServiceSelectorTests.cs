@@ -23,7 +23,7 @@ public class ServiceSelectorTests
     {
         var services = new List<BackendService>
         {
-            new (){HostName = "a"}
+            new (){HostName = "a", Port=8081, ServiceHealth = new ServiceHealth(true,DateTime.UtcNow,"ok")}
         };
 
         var sut = new ServiceSelector(services);
@@ -38,8 +38,10 @@ public class ServiceSelectorTests
     {
         var services = new List<BackendService>
         {
-            new (){HostName = "a"},
-            new (){HostName = "b"},
+            new ()
+        {HostName = "a",Port=8081, ServiceHealth = new ServiceHealth(true,DateTime.UtcNow,"ok")},
+            new ()
+        {HostName = "b",Port=8082, ServiceHealth = new ServiceHealth(true,DateTime.UtcNow,"ok")},
         };
 
         var sut = new ServiceSelector(services);
@@ -50,14 +52,29 @@ public class ServiceSelectorTests
         result?.HostName.Should().Be("b");
     }
 
+    [Fact]
+    public void TwoAvailableServices_One_Is_UnHealthy()
+    {
+        var services = new List<BackendService>
+        {
+            new (){HostName = "a",Port = 8081, ServiceHealth = new ServiceHealth(true,DateTime.UtcNow,"ok")},
+            new (){HostName = "b", Port = 8082, ServiceHealth = new ServiceHealth(false,DateTime.UtcNow,"bad")}
+        };
+
+        var sut = new ServiceSelector(services);
+
+        var result = sut.GetNextService();
+        result?.HostName.Should().Be("a");
+    }
 
     [Fact]
     public void RoundRobinIndexResets()
     {
         var services = new List<BackendService>
         {
-            new (){HostName = "a"},
-            new (){HostName = "b"},
+            new (){HostName = "a",Port = 8081, ServiceHealth = new ServiceHealth(true,DateTime.UtcNow,"ok")},
+            new (){HostName = "b",Port = 8082, ServiceHealth = new ServiceHealth(true,DateTime.UtcNow,"ok")},
+
         };
 
         var sut = new ServiceSelector(services);
@@ -76,8 +93,8 @@ public class ServiceSelectorTests
         {
             BackendServices = new List<BackendService>
             {
-                new() { HostName = "a", Port = 8081 },
-                new() { HostName = "b", Port = 8082 }
+                new() { HostName = "a", Port = 8081, ServiceHealth = new ServiceHealth(true,DateTime.UtcNow,"ok")},
+                new() { HostName = "b", Port = 8082, ServiceHealth = new ServiceHealth(true,DateTime.UtcNow,"ok")},
             }
         };
 

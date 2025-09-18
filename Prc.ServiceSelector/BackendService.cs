@@ -3,13 +3,17 @@ namespace Prc.ServiceSelector;
 
 public class BackendService
 {
+    public BackendService()
+    {
+        ServiceHealth = new ServiceHealth(true, DateTime.UtcNow, "?");
+    }
     public string HostName { get; set; } = string.Empty;
     public int Port { get; set; }
 
     public ServiceHealth ServiceHealth { get; set; }
 }
 
-public record ServiceHealth(bool IsHealthy, DateTime timestamp, string? info);
+public record ServiceHealth(bool IsHealthy, DateTime? timestamp, string? info);
 
 public class LoadBalancerConfig
 {

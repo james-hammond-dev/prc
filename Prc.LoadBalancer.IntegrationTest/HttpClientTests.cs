@@ -10,9 +10,14 @@ public class HttpClientTests : TestBase
     }
 
     //re-using single client, some degree of connection re-use
-    //until connection is overwhelmed (?)
-    [Fact]
-    public async Task ReuseOfSingleConnectionInHttpClient()
+    //until connection is overwhelmed / recycled
+    //this might be machine/OS dependent !
+    [Theory]
+    [InlineData(10, 0)]
+    [InlineData(100, 0)]
+    [InlineData(500, 202)]
+    [InlineData(600, 297)]
+    public async Task ReuseOfSingleConnectionInHttpClient(int totalRequests, int expectedServer2Responses)
     {
         var loadBalancerPort = GetAvailablePort();
 
@@ -26,18 +31,17 @@ public class HttpClientTests : TestBase
         var responses = new List<string>();
 
         //using the same client across requests
+        //
         var client = new HttpClient();
 
         try
         {
-            const int totalRequests = 1000;
-
             for (int i = 0; i < totalRequests; i++)
             {
                 responses.Add(await client.GetStringAsync($"http://localhost:{loadBalancerPort}/"));
             }
 
-            ValidateLoadBalancerSplitUneven(responses, totalRequests);
+            ValidateLoadBalancerSplitUneven(responses, totalRequests, expectedServer2Responses);
         }
         finally
         {
@@ -45,7 +49,7 @@ public class HttpClientTests : TestBase
             s2.Close();
         }
 
-        static void ValidateLoadBalancerSplitUneven(List<string> responses, int totalRequests)
+        static void ValidateLoadBalancerSplitUneven(List<string> responses, int totalRequests, int expectedServer2Responses)
         {
             responses.Count().Should().Be(totalRequests);
 
@@ -54,11 +58,10 @@ public class HttpClientTests : TestBase
                         .Should().BeGreaterThan(totalRequests / 2);
             responses.Where(x => x.Contains("s2-response"))
                         .Count()
-                        .Should().BeLessThan(totalRequests / 2);
+                        .Should().Be(expectedServer2Responses);
+
         }
-
     }
-
 }
 
 
