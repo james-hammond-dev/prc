@@ -1,20 +1,3 @@
-Problem Statement
-
-It’s 1999. You, a software engineer working at a rapidly growing scale-up.
-The company has outgrown its start-up era, single server setup. Things are starting to fail
-rapidly. You are tasked with designing and building a software-based load balancer to allow
-multiple machines to handle the load.
-
-Your task is to implement a basic, software-based load-balancer, operating at layer 4. It must
-have the following capabilities:
-
- It can accept traffic from many clients
- It can balance traffic across multiple backend services
- It can remove a service from operation if it goes offline
-You may add other requirements as necessary / you feel appropriate.
-You may choose and language you are comfortable with. You should not use any cloud-
-services in the completion of this exercise.
-
 
 Simple load balancer, round-robin implementation
 
@@ -22,6 +5,14 @@ Make-based build / test / deploy to docker
 
 1. create initial project skeleton with simplest implemetation of
 a load balancer and a running service
-
 2. build/test locally, optionally integration test
-3. deploy to docker container, run integration,load tests
+3. 
+
+Outstanding :
+
+make services more configurable 
+add ILogger<T>
+add support for OTel for observability
+deploy to docker environments, run integration,load tests
+
+

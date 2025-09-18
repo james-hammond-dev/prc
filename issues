@@ -1,2 +1,4 @@
+
 - local integration tests can intermittently run into socket errors starting up.
+
 - timing issue with IntegrationTests.LoadBalancerServiceHealthTests.Three_Services_HealthStatus_Can_Fluctuate (test flaky on 3rd assertion following service restart, ok in debug mode)
